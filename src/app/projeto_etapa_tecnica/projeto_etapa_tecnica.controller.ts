@@ -1,34 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ProjetoEtapaTecnicaService } from './projeto_etapa_tecnica.service';
-import { CreateProjetoEtapaTecnicaDto } from './dto/create-projeto_etapa_tecnica.dto';
-import { UpdateProjetoEtapaTecnicaDto } from './dto/update-projeto_etapa_tecnica.dto';
+// import {
+//   Body,
+//   Controller,
+//   Delete,
+//   Get,
+//   HttpCode,
+//   HttpStatus,
+//   Param,
+//   Post,
+//   Put,
+// } from '@nestjs/common';
+// import { CreateProjetoEtapaTecnicaDto } from './dto/create-projeto_etapa_tecnica.dto';
+// import { UpdateProjetoEtapaTecnicaDto } from './dto/update-projeto_etapa_tecnica.dto';
+// import { ProjetoEtapaTecnicaService } from './projeto_etapa_tecnica.service';
 
-@Controller('projeto-etapa-tecnica')
-export class ProjetoEtapaTecnicaController {
-  constructor(private readonly projetoEtapaTecnicaService: ProjetoEtapaTecnicaService) {}
+// @Controller('projeto-etapa-tecnica')
+// export class ProjetoEtapaTecnicaController {
+//   constructor(
+//     private readonly projetoEtapaTecnicaService: ProjetoEtapaTecnicaService,
+//   ) {}
 
-  @Post()
-  create(@Body() createProjetoEtapaTecnicaDto: CreateProjetoEtapaTecnicaDto) {
-    return this.projetoEtapaTecnicaService.create(createProjetoEtapaTecnicaDto);
-  }
+//   @Get()
+//   async index() {
+//     return this.projetoEtapaTecnicaService.findAll();
+//   }
 
-  @Get()
-  findAll() {
-    return this.projetoEtapaTecnicaService.findAll();
-  }
+//   @Get(':id')
+//   async findOne(@Param('id') id: number) {
+//     return this.projetoEtapaTecnicaService.findOneOrFail({
+//       where: { projetoId: id },
+//     });
+//   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projetoEtapaTecnicaService.findOne(+id);
-  }
+//   @Post()
+//   async create(
+//     @Body() createProjetoEtapaTecnicaDto: CreateProjetoEtapaTecnicaDto,
+//   ) {
+//     return this.projetoEtapaTecnicaService.store(createProjetoEtapaTecnicaDto);
+//   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProjetoEtapaTecnicaDto: UpdateProjetoEtapaTecnicaDto) {
-    return this.projetoEtapaTecnicaService.update(+id, updateProjetoEtapaTecnicaDto);
-  }
+//   @Put(':id')
+//   async update(
+//     @Param('id') id: number,
+//     @Body() updateProjetoEtapaTecnicaDto: UpdateProjetoEtapaTecnicaDto,
+//   ) {
+//     return this.projetoEtapaTecnicaService.update(
+//       +id,
+//       updateProjetoEtapaTecnicaDto,
+//     );
+//   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projetoEtapaTecnicaService.remove(+id);
-  }
-}
+//   @Delete(':id')
+//   @HttpCode(HttpStatus.NO_CONTENT)
+//   async remove(@Param('id') id: number) {
+//     return await this.projetoEtapaTecnicaService.destroy(id);
+//   }
+// }

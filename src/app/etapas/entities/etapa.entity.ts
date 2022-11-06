@@ -29,4 +29,14 @@ export class EtapaEntity {
 
   @DeleteDateColumn()
   delete_at: string;
+
+  // @OneToMany(
+  //   () => ProjetoEtapaTecnicaEntity,
+  //   (projeto_etapa_tecnica) => projeto_etapa_tecnica.etapa,
+  // )
+  // projeto_etapa_tecnica: ProjetoEtapaTecnicaEntity[];
+
+  // @ManyToMany(() => TecnicaEntity)
+  // @JoinTable()
+  // tecnicas: TecnicaEntity[];
 }

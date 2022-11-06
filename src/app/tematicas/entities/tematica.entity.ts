@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProjetoEntity } from '../../projetos/entities/projeto.entity';
 
 @Entity({ name: 'tematicas' })
 export class TematicaEntity {
@@ -7,4 +8,7 @@ export class TematicaEntity {
 
   @Column({ length: 45, nullable: false, unique: true })
   titulo: string;
+
+  @OneToMany(() => ProjetoEntity, (projeto) => projeto.tematica)
+  projeto: ProjetoEntity[];
 }

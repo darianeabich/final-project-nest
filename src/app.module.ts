@@ -1,34 +1,37 @@
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 /* eslint-disable prettier/prettier */
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { EtapasModule } from './app/etapas/etapas.module';
 import { GruposModule } from './app/grupos/grupos.module';
 import { ProjetosModule } from './app/projetos/projetos.module';
-import { ProjetoEtapaTecnicaModule } from './app/projeto_etapa_tecnica/projeto_etapa_tecnica.module';
+// import { ProjetoEtapaTecnicaModule } from './app/projeto_etapa_tecnica/projeto_etapa_tecnica.module';
 import { TecnicasModule } from './app/tecnicas/tecnicas.module';
 import { TematicasModule } from './app/tematicas/tematicas.module';
 import { UsuariosModule } from './app/usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
 import { FiltroDeExcecaoHttp } from './common/filtros/filtro-de-excecao-http.filter';
 import { TransfomaInterceptor } from './core/http/transforma-resposta.interceptor';
-
+import { PetModule } from './app/pet/pet.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
-      type: process.env.DB_CONNECTION,
+      type: 'mysql',
       host: process.env.MYSQL_HOST,
       port: 3306,
       username: process.env.MYSQL_USER,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DB_NAME,
+      synchronize: true,
+      logging: false,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      migrations: [__dirname + '/migrations/*{.ts,.js}'],
-      migrationsTableName: 'custom_migration_table',
-      synchronize: false,
+      migrations: [__dirname + './src/migration/*{.ts,.js}'],
+      migrationsTableName: 'migration',
     } as TypeOrmModuleOptions),
+    // synchronize: true,),
     UsuariosModule,
     AuthModule,
     EtapasModule,
@@ -36,7 +39,8 @@ import { TransfomaInterceptor } from './core/http/transforma-resposta.intercepto
     TematicasModule,
     ProjetosModule,
     GruposModule,
-    ProjetoEtapaTecnicaModule,
+    PetModule,
+    // ProjetoEtapaTecnicaModule,
   ],
   controllers: [],
   providers: [

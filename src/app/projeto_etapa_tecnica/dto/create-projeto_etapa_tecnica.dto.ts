@@ -1,1 +1,5 @@
-export class CreateProjetoEtapaTecnicaDto {}
+// export class CreateProjetoEtapaTecnicaDto {
+//   projetoId: number;
+//   etapaId: number;
+//   tecnicaId: number;
+// }

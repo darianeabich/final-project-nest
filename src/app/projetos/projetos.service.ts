@@ -1,12 +1,11 @@
-import { TematicaEntity } from './../tematicas/entities/tematica.entity';
-import { IPaginationOptions } from './../../../node_modules/nestjs-typeorm-paginate/dist/interfaces/index.d';
-import { ProjetoEntity } from './entities/projeto.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { paginate } from 'nestjs-typeorm-paginate';
+import { FindOneOptions, Repository } from 'typeorm';
+import { IPaginationOptions } from './../../../node_modules/nestjs-typeorm-paginate/dist/interfaces/index.d';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
 import { UpdateProjetoDto } from './dto/update-projeto.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions } from 'typeorm';
-import { paginate } from 'nestjs-typeorm-paginate';
+import { ProjetoEntity } from './entities/projeto.entity';
 
 @Injectable()
 export class ProjetosService {
@@ -17,9 +16,17 @@ export class ProjetosService {
 
   findAll(options: IPaginationOptions) {
     const queryBuilder = this.projetoRepository.createQueryBuilder('projeto');
-    queryBuilder.select(['projeto.id', 'projeto.titulo']);
+
+    queryBuilder.select([
+      'projeto.id',
+      'projeto.titulo',
+      'projeto.descricao',
+      'projeto.status',
+      'projeto.finalizado',
+      'projeto.tematicaId',
+    ]);
     queryBuilder.orderBy('projeto.id', 'ASC');
-    return paginate<TematicaEntity>(queryBuilder, options);
+    return paginate<ProjetoEntity>(queryBuilder, options);
   }
 
   findOne(id: number) {
@@ -53,7 +60,7 @@ export class ProjetosService {
     return await this.projetoRepository.save(projetoEncontrado);
   }
 
-  async remove(id: number) {
+  async destroy(id: number) {
     await this.projetoRepository.findOneOrFail({ where: { id } });
     this.projetoRepository.softDelete({ id });
   }

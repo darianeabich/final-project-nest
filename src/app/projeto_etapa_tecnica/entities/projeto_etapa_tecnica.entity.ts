@@ -1,19 +1,37 @@
-import { Entity, JoinTable, ManyToMany } from 'typeorm';
-import { EtapaEntity } from '../../etapas/entities/etapa.entity';
-import { ProjetoEntity } from './../../projetos/entities/projeto.entity';
-import { TecnicaEntity } from './../../tecnicas/entities/tecnica.entity';
+// import {
+//   CreateDateColumn,
+//   DeleteDateColumn,
+//   Entity,
+//   PrimaryColumn,
+//   UpdateDateColumn,
+// } from 'typeorm';
 
-@Entity('projeto_etapa_tecnica')
-export class ProjetoEtapaTecnica {
-  @ManyToMany(() => ProjetoEntity)
-  @JoinTable()
-  projeto: number;
+// @Entity({ name: 'projeto_etapa_tecnica' })
+// export class ProjetoEtapaTecnicaEntity {
+//   @PrimaryColumn()
+//   projetoId: number;
 
-  @ManyToMany(() => EtapaEntity)
-  @JoinTable()
-  etapa: number;
+//   @PrimaryColumn()
+//   etapaId: number;
 
-  @ManyToMany(() => TecnicaEntity)
-  @JoinTable()
-  tecnica: number[];
-}
+//   @PrimaryColumn()
+//   tecnicaId: number;
+
+//   @CreateDateColumn()
+//   created_at: string;
+
+//   @UpdateDateColumn()
+//   updated_at: string;
+
+//   @DeleteDateColumn()
+//   delete_at: string;
+
+//   // @ManyToOne(() => ProjetoEntity, (projeto) => projeto.projeto_etapa_tecnica)
+//   // projeto: ProjetoEntity;
+
+//   // @ManyToOne(() => EtapaEntity, (etapa) => etapa.projeto_etapa_tecnica)
+//   // etapa: EtapaEntity;
+
+//   //   @ManyToOne(() => TecnicaEntity, (tecnica) => tecnica.projeto_etapa_tecnica)
+//   //   tecnica: TecnicaEntity;
+// }

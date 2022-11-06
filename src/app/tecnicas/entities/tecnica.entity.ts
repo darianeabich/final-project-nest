@@ -3,9 +3,11 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PetEntity } from './../../pet/entities/pet.entity';
 
 @Entity({ name: 'tecnicas' })
 export class TecnicaEntity {
@@ -44,4 +46,12 @@ export class TecnicaEntity {
 
   @DeleteDateColumn()
   delete_at: string;
+
+  @ManyToOne(() => PetEntity, (pet) => pet.tecnicas)
+  pet: PetEntity;
+  // @OneToMany(
+  //   () => ProjetoEtapaTecnicaEntity,
+  //   (projeto_etapa_tecnica) => projeto_etapa_tecnica.tecnica,
+  // )
+  // projeto_etapa_tecnica: ProjetoEtapaTecnicaEntity[];
 }
