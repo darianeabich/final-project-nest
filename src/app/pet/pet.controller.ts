@@ -48,4 +48,14 @@ export class PetController {
   async remove(@Param('id') id: number) {
     return await this.petService.destroy(+id);
   }
+
+  @Get('projeto/:id')
+  async findForProjects(@Param('id') id: number) {
+    return await this.petService.findForProjects({ where: { projeto: id } });
+  }
+
+  @Get('projeto')
+  async findForProjectsAll() {
+    return await this.petService.findAllWithoutPage();
+  }
 }

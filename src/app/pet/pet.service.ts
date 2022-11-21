@@ -17,7 +17,7 @@ export class PetService {
   async findAll(options: IPaginationOptions) {
     const queryBuilder = this.petRepository.createQueryBuilder('pet');
 
-    queryBuilder.select(['pet.id', 'pet.um', 'pet.dois', 'pet.tres']);
+    queryBuilder.select(['pet.id', 'pet.projeto', 'pet.etapa', 'pet.tecnicas']);
     queryBuilder.orderBy('pet.id', 'ASC');
 
     return paginate<PetEntity>(queryBuilder, options);
@@ -33,6 +33,17 @@ export class PetService {
     } catch (error) {
       throw new NotFoundException(error.message);
     }
+  }
+
+  async findAllWithoutPage() {
+    const projetos = this.petRepository.find({
+      relations: {
+        projeto: true,
+        etapa: true,
+        tecnicas: true,
+      },
+    });
+    return await projetos;
   }
 
   async store(createPetDto: CreatePetDto) {
@@ -58,5 +69,10 @@ export class PetService {
   async destroy(id: number) {
     await this.petRepository.findOneOrFail({ where: { id } });
     this.petRepository.softDelete({ id });
+  }
+
+  async findForProjects(options: FindOneOptions<PetEntity>) {
+    const projeto = this.petRepository.find(options);
+    return await projeto;
   }
 }

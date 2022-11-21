@@ -1,5 +1,6 @@
-import { TematicaEntity } from './../../tematicas/entities/tematica.entity';
 import { IsNotEmpty } from 'class-validator';
+import { TematicaEntity } from './../../tematicas/entities/tematica.entity';
+import { UsuarioEntity } from './../../usuarios/entities/usuarios.entity';
 
 export class CreateProjetoDto {
   @IsNotEmpty()
@@ -16,4 +17,7 @@ export class CreateProjetoDto {
 
   @IsNotEmpty()
   tematica: TematicaEntity;
+
+  @IsNotEmpty()
+  usuario: UsuarioEntity;
 }

@@ -3,10 +3,10 @@ import { TecnicaEntity } from './../../tecnicas/entities/tecnica.entity';
 
 export class CreatePetDto {
   @IsNotEmpty()
-  um: number;
+  projeto: number;
 
   @IsNotEmpty()
-  dois: number;
+  etapa: number;
 
   @IsNotEmpty()
   tecnicas: TecnicaEntity[];

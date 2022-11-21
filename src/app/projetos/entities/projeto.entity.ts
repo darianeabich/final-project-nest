@@ -3,10 +3,13 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UsuarioEntity } from './../../usuarios/entities/usuarios.entity';
 
 import { TematicaEntity } from './../../tematicas/entities/tematica.entity';
 
@@ -47,6 +50,10 @@ export class ProjetoEntity {
 
   @ManyToOne(() => TematicaEntity, (tematica) => tematica.projeto)
   tematica: TematicaEntity;
+
+  @OneToOne(() => UsuarioEntity)
+  @JoinColumn()
+  usuario: UsuarioEntity;
 
   // @ManyToMany(() => EtapaEntity)
   // @JoinTable({

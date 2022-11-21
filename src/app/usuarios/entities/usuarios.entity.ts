@@ -1,3 +1,5 @@
+import { hashSync } from 'bcrypt';
+import { Exclude } from 'class-transformer';
 import {
   BeforeInsert,
   Column,
@@ -7,8 +9,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { hashSync } from 'bcrypt';
-import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'usuarios' })
 export class UsuarioEntity {

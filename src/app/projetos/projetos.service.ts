@@ -17,20 +17,37 @@ export class ProjetosService {
   findAll(options: IPaginationOptions) {
     const queryBuilder = this.projetoRepository.createQueryBuilder('projeto');
 
-    queryBuilder.select([
-      'projeto.id',
-      'projeto.titulo',
-      'projeto.descricao',
-      'projeto.status',
-      'projeto.finalizado',
-      'projeto.tematicaId',
-    ]);
+    queryBuilder
+      .select([
+        'projeto.id',
+        'projeto.titulo',
+        'projeto.descricao',
+        'projeto.status',
+        'projeto.finalizado',
+        'projeto.tematicaId',
+        'projeto.usuarioId',
+      ])
+      .leftJoinAndSelect('projeto.tematica', 'tematica');
     queryBuilder.orderBy('projeto.id', 'ASC');
     return paginate<ProjetoEntity>(queryBuilder, options);
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} projeto`;
+    const queryBuilder = this.projetoRepository.createQueryBuilder('projeto');
+    queryBuilder
+      .select([
+        'projeto.id',
+        'projeto.titulo',
+        'projeto.descricao',
+        'projeto.status',
+        'projeto.finalizado',
+        'projeto.tematicaId',
+        'projeto.usuarioId',
+      ])
+      .leftJoinAndSelect('projeto.tematica', 'tematica')
+      .where('projeto.id = :id', { id });
+
+    return queryBuilder;
   }
 
   async findOneOrFail(options: FindOneOptions<ProjetoEntity>) {
