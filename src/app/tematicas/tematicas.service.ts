@@ -1,11 +1,11 @@
-import { IPaginationOptions } from './../../../node_modules/nestjs-typeorm-paginate/dist/interfaces/index.d';
-import { TematicaEntity } from './entities/tematica.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate } from 'nestjs-typeorm-paginate';
+import { FindOneOptions, Repository } from 'typeorm';
+import { IPaginationOptions } from './../../../node_modules/nestjs-typeorm-paginate/dist/interfaces/index.d';
 import { CreateTematicaDto } from './dto/create-tematica.dto';
 import { UpdateTematicaDto } from './dto/update-tematica.dto';
-import { Repository, FindOneOptions } from 'typeorm';
-import { paginate } from 'nestjs-typeorm-paginate';
+import { TematicaEntity } from './entities/tematica.entity';
 
 @Injectable()
 export class TematicasService {
@@ -31,7 +31,7 @@ export class TematicasService {
     }
   }
 
-  async store(createTematicaDto: CreateTematicaDto) {
+  async create(createTematicaDto: CreateTematicaDto) {
     const tematicaCriada = this.tematicasRepository.create(createTematicaDto);
     return await this.tematicasRepository.save(tematicaCriada);
   }
@@ -50,7 +50,7 @@ export class TematicasService {
     return await this.tematicasRepository.save(tematicaEncontrada);
   }
 
-  async destroy(id: number) {
+  async remove(id: number) {
     await this.tematicasRepository.findOneOrFail({ where: { id } });
     this.tematicasRepository.softDelete({ id });
   }

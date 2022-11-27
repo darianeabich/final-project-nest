@@ -46,7 +46,7 @@ export class PetService {
     return await projetos;
   }
 
-  async store(createPetDto: CreatePetDto) {
+  async create(createPetDto: CreatePetDto) {
     const petCriado = this.petRepository.create(createPetDto);
     return await this.petRepository.save(petCriado);
   }
@@ -66,7 +66,7 @@ export class PetService {
     return await this.petRepository.save(petEncontrado);
   }
 
-  async destroy(id: number) {
+  async remove(id: number) {
     await this.petRepository.findOneOrFail({ where: { id } });
     this.petRepository.softDelete({ id });
   }

@@ -6,8 +6,8 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
 } from '@nestjs/common';
 
@@ -21,36 +21,40 @@ export class EtapasController {
   constructor(private readonly etapasService: EtapasService) {}
 
   @Get()
-  async index(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ) {
+  async index(@Query('page') page = 1, @Query('limit') limit = 10) {
     limit = limit > 100 ? 100 : limit;
 
-    return this.etapasService.findAll({ page, limit, route: 'http://localhost:3000/etapas' });
+    return this.etapasService.findAll({
+      page,
+      limit,
+      route: 'http://localhost:3000/etapas',
+    });
   }
 
   @Get(':id')
   async show(@Param('id') id: number) {
-    return this.etapasService.findOneOrFail({where: { id } });
+    return this.etapasService.findOneOrFail({ where: { id } });
   }
 
   // @Role('admin')
   @Post()
-  async store(@Body() createEtapaDto: CreateEtapaDto) {
-    return this.etapasService.store(createEtapaDto);
+  async create(@Body() createEtapaDto: CreateEtapaDto) {
+    return this.etapasService.create(createEtapaDto);
   }
 
   // @Role('admin')
-  @Put(':id')
-  async update(@Param('id') id: number, @Body() updateEtapaDto: UpdateEtapaDto) {
+  @Patch(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateEtapaDto: UpdateEtapaDto,
+  ) {
     return this.etapasService.update(+id, updateEtapaDto);
   }
 
   // @Role('admin')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async destroy(@Param('id') id: number) {
-    return await this.etapasService.destroy(id);
+  async remove(@Param('id') id: number) {
+    return await this.etapasService.remove(id);
   }
 }

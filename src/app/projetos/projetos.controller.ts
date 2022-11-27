@@ -7,8 +7,8 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
 } from '@nestjs/common';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
@@ -34,12 +34,17 @@ export class ProjetosController {
     return this.projetosService.findOneOrFail({ where: { id } });
   }
 
-  @Post()
-  async create(@Body() createProjetoDto: CreateProjetoDto) {
-    return this.projetosService.store(createProjetoDto);
+  @Get('owner/:id')
+  async findByUser(@Param('id') id: number) {
+    return this.projetosService.findByUser(id);
   }
 
-  @Put(':id')
+  @Post()
+  async create(@Body() createProjetoDto: CreateProjetoDto) {
+    return this.projetosService.create(createProjetoDto);
+  }
+
+  @Patch(':id')
   async update(
     @Param('id') id: number,
     @Body() updateProjetoDto: UpdateProjetoDto,
@@ -50,6 +55,6 @@ export class ProjetosController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: number) {
-    return this.projetosService.destroy(+id);
+    return this.projetosService.remove(+id);
   }
 }

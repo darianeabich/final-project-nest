@@ -3,12 +3,14 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { GrupoEntity } from './../../grupos/entities/grupo.entity';
 import { UsuarioEntity } from './../../usuarios/entities/usuarios.entity';
 
 import { TematicaEntity } from './../../tematicas/entities/tematica.entity';
@@ -42,18 +44,28 @@ export class ProjetoEntity {
   @DeleteDateColumn()
   delete_at: string;
 
+  @ManyToOne(() => TematicaEntity, (tematica) => tematica.projeto)
+  tematica: TematicaEntity;
+
+  @ManyToOne(() => UsuarioEntity, (usuario) => usuario.projeto)
+  usuario: UsuarioEntity;
+
+  @ManyToMany(() => UsuarioEntity)
+  @JoinTable()
+  usuario_participante: UsuarioEntity[];
+
+  @OneToMany(() => GrupoEntity, (grupo) => grupo.projeto)
+  grupos?: GrupoEntity[];
+
   // @OneToMany(
   //   () => ProjetoEtapaTecnicaEntity,
   //   (projeto_etapa_tecnica) => projeto_etapa_tecnica.projeto,
   // )
   // projeto_etapa_tecnica: ProjetoEtapaTecnicaEntity[];
 
-  @ManyToOne(() => TematicaEntity, (tematica) => tematica.projeto)
-  tematica: TematicaEntity;
-
-  @OneToOne(() => UsuarioEntity)
-  @JoinColumn()
-  usuario: UsuarioEntity;
+  // @OneToOne(() => UsuarioEntity)
+  // @JoinColumn()
+  // usuario: UsuarioEntity;
 
   // @ManyToMany(() => EtapaEntity)
   // @JoinTable({

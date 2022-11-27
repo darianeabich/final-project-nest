@@ -1,16 +1,16 @@
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuarios.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, Like, Repository } from 'typeorm';
-import { UsuarioEntity } from './entities/usuarios.entity';
 import {
+  IPaginationOptions,
   paginate,
   Pagination,
-  IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
-import { Observable, from } from 'rxjs';
+import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { FindOneOptions, Like, Repository } from 'typeorm';
+import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { UpdateUsuarioDto } from './dto/update-usuarios.dto';
+import { UsuarioEntity } from './entities/usuarios.entity';
 
 @Injectable()
 export class UsuariosService {
@@ -100,7 +100,7 @@ export class UsuariosService {
     }
   }
 
-  async store(usuario: CreateUsuarioDto) {
+  async create(usuario: CreateUsuarioDto) {
     const usuarioCriado = this.usuariosRepository.create(usuario);
     return await this.usuariosRepository.save(usuarioCriado);
   }
@@ -127,7 +127,7 @@ export class UsuariosService {
     return await this.usuariosRepository.save(usuarioEncontrado);
   }
 
-  async destroy(id: number) {
+  async remove(id: number) {
     await this.usuariosRepository.findOneOrFail({ where: { id } });
     this.usuariosRepository.softDelete({ id });
   }

@@ -17,7 +17,7 @@ export class TecnicaEntity {
   @Column({ length: 45, nullable: false })
   titulo: string;
 
-  @Column({ length: 1500, nullable: false })
+  @Column({ length: 2200, nullable: false })
   descricao: string;
 
   @Column({ default: true, nullable: false })
@@ -26,7 +26,7 @@ export class TecnicaEntity {
   @Column({ length: 2000, nullable: false })
   como_usar: string;
 
-  @Column({ length: 1500, nullable: false })
+  @Column({ length: 2000, nullable: false })
   quando_usar: string;
 
   @Column({ length: 500, nullable: false })

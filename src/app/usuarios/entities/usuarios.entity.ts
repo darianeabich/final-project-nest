@@ -6,9 +6,11 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProjetoEntity } from '../../projetos/entities/projeto.entity';
 
 @Entity({ name: 'usuarios' })
 export class UsuarioEntity {
@@ -48,5 +50,15 @@ export class UsuarioEntity {
   @BeforeInsert()
   hashPassword() {
     this.senha = hashSync(this.senha, 8);
+  }
+
+  @OneToMany(() => ProjetoEntity, (projeto) => projeto.usuario)
+  projeto: ProjetoEntity[];
+
+  addProjeto(project: ProjetoEntity) {
+    if (this.projeto == null) {
+      this.projeto = new Array<ProjetoEntity>();
+    }
+    this.projeto.push(project);
   }
 }

@@ -15,6 +15,8 @@ import { AuthModule } from './auth/auth.module';
 import { FiltroDeExcecaoHttp } from './common/filtros/filtro-de-excecao-http.filter';
 import { TransfomaInterceptor } from './core/http/transforma-resposta.interceptor';
 import { PetModule } from './app/pet/pet.module';
+import { ParticipacaoModule } from './app/participacao/participacao.module';
+import { CommonModule } from './common/common.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -40,6 +42,8 @@ import { PetModule } from './app/pet/pet.module';
     ProjetosModule,
     GruposModule,
     PetModule,
+    ParticipacaoModule,
+    CommonModule,
     // ProjetoEtapaTecnicaModule,
   ],
   controllers: [],

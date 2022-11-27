@@ -1,6 +1,16 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 
 import { NestResponse } from './../../core/http/nest-response';
 import { NestResponseBuilder } from './../../core/http/nest-response-builder';
@@ -9,29 +19,29 @@ import { UpdateUsuarioDto } from './dto/update-usuarios.dto';
 import { UsuariosService } from './usuarios.service';
 
 @Controller('usuarios')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
-  
+
   @Get()
-  async index(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-    // @Query('nome') nome: string,
-  ) {
+  async index(@Query('page') page = 1, @Query('limit') limit = 10) {
     limit = limit > 100 ? 100 : limit;
-    // console.log('nome => ', nome);
-    return this.usuariosService.findAll({ page, limit, route: 'http://localhost:3000/usuarios' });
+    return this.usuariosService.findAll({
+      page,
+      limit,
+      route: 'http://localhost:3000/usuarios',
+    });
   }
 
   // @Role('admin')
+  // @Header('Access-Control-Allow-Origin', '*')
   @Post()
-  async store(@Body() body: CreateUsuarioDto): Promise<NestResponse> {
-    const usuarioCriado = await this.usuariosService.store(body);
+  async create(@Body() body: CreateUsuarioDto): Promise<NestResponse> {
+    const usuarioCriado = await this.usuariosService.create(body);
     return new NestResponseBuilder()
       .comStatus(HttpStatus.CREATED)
       .comHeaders({
-        'Location': `/usuarios/${usuarioCriado.id}`
+        Location: `/usuarios/${usuarioCriado.id}`,
       })
       .comBody(usuarioCriado)
       .build();
@@ -42,7 +52,7 @@ export class UsuariosController {
     return await this.usuariosService.findOneOrFail({ where: { id } });
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(@Param('id') id: number, @Body() body: UpdateUsuarioDto) {
     return await this.usuariosService.update(id, body);
   }
@@ -50,7 +60,7 @@ export class UsuariosController {
   // @Role('admin')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async destroy(@Param('id') id: number) {
-    return await this.usuariosService.destroy(id);
+  async remove(@Param('id') id: number) {
+    return await this.usuariosService.remove(id);
   }
 }

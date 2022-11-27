@@ -1,11 +1,11 @@
-import { IPaginationOptions } from './../../../node_modules/nestjs-typeorm-paginate/dist/interfaces/index.d';
-import { EtapaEntity } from './entities/etapa.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate } from 'nestjs-typeorm-paginate';
+import { FindOneOptions, Repository } from 'typeorm';
 import { CreateEtapaDto } from '../../app/etapas/dto/create-etapa.dto';
 import { UpdateEtapaDto } from '../../app/etapas/dto/update-etapa.dto';
-import { Repository, FindOneOptions } from 'typeorm';
-import { paginate } from 'nestjs-typeorm-paginate';
+import { IPaginationOptions } from './../../../node_modules/nestjs-typeorm-paginate/dist/interfaces/index.d';
+import { EtapaEntity } from './entities/etapa.entity';
 
 @Injectable()
 export class EtapasService {
@@ -30,7 +30,7 @@ export class EtapasService {
     }
   }
 
-  async store(usuario: CreateEtapaDto) {
+  async create(usuario: CreateEtapaDto) {
     const etapaCriada = this.etapaRepository.create(usuario);
     return await this.etapaRepository.save(etapaCriada);
   }
@@ -53,7 +53,7 @@ export class EtapasService {
     return await this.etapaRepository.save(etapaEncontrada);
   }
 
-  async destroy(id: number) {
+  async remove(id: number) {
     await this.etapaRepository.findOneOrFail({ where: { id } });
     this.etapaRepository.softDelete({ id });
   }

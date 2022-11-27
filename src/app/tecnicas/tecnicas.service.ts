@@ -1,11 +1,10 @@
-import { IPaginationOptions } from './../../../node_modules/nestjs-typeorm-paginate/dist/interfaces/index.d';
-import { TecnicaEntity } from './entities/tecnica.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
+import { PaginationDto } from './../../common/dto/pagination.dto';
 import { CreateTecnicaDto } from './dto/create-tecnica.dto';
 import { UpdateTecnicaDto } from './dto/update-tecnica.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions } from 'typeorm';
-import { paginate } from 'nestjs-typeorm-paginate';
+import { TecnicaEntity } from './entities/tecnica.entity';
 
 @Injectable()
 export class TecnicasService {
@@ -14,26 +13,37 @@ export class TecnicasService {
     private readonly tecnicaRepository: Repository<TecnicaEntity>,
   ) {}
 
-  async findAll(options: IPaginationOptions) {
-    const queryBuilder = this.tecnicaRepository.createQueryBuilder('tecnica');
-    queryBuilder.select([
-      'tecnica.id',
-      'tecnica.titulo',
-      'tecnica.descricao',
-      'tecnica.como_usar',
-      'tecnica.quando_usar',
-      'tecnica.material',
-      'tecnica.tempo',
-      'tecnica.tipo',
-      'tecnica.status',
-    ]);
-    queryBuilder.orderBy('tecnica.id', 'ASC');
-    return paginate<TecnicaEntity>(queryBuilder, options);
+  // async findAll(options: IPaginationOptions) {
+  //   const queryBuilder = this.tecnicaRepository.createQueryBuilder('tecnica');
+  //   queryBuilder.select([
+  //     'tecnica.id',
+  //     'tecnica.titulo',
+  //     'tecnica.descricao',
+  //     'tecnica.como_usar',
+  //     'tecnica.quando_usar',
+  //     'tecnica.material',
+  //     'tecnica.tempo',
+  //     'tecnica.tipo',
+  //     'tecnica.status',
+  //   ]);
+  //   queryBuilder.orderBy('tecnica.id', 'ASC');
+  //   return paginate<TecnicaEntity>(queryBuilder, options);
+  // }
+
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+    const tecnicas = await this.tecnicaRepository.find({
+      take: limit,
+      skip: offset,
+    });
+
+    return tecnicas;
   }
 
-  async findAllWithoutPage() {
-    return await this.tecnicaRepository.find();
-  }
+  // async findOne() {
+  //   let tecnica: TecnicaEntity;
+
+  // }
 
   async findOneOrFail(options: FindOneOptions<TecnicaEntity>) {
     try {
@@ -43,7 +53,7 @@ export class TecnicasService {
     }
   }
 
-  async store(createTecnicaDto: CreateTecnicaDto) {
+  async create(createTecnicaDto: CreateTecnicaDto) {
     const tecnicaCriada = this.tecnicaRepository.create(createTecnicaDto);
     return await this.tecnicaRepository.save(tecnicaCriada);
   }
@@ -90,7 +100,7 @@ export class TecnicasService {
     return await this.tecnicaRepository.save(tecnicaEncontrada);
   }
 
-  async destroy(id: number) {
+  async remove(id: number) {
     await this.findOneOrFail({ where: { id } });
     this.tecnicaRepository.softDelete(id);
   }

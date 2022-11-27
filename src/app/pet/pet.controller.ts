@@ -6,8 +6,8 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
 } from '@nestjs/common';
 import { CreatePetDto } from './dto/create-pet.dto';
@@ -35,10 +35,10 @@ export class PetController {
 
   @Post()
   async create(@Body() createPetDto: CreatePetDto) {
-    return await this.petService.store(createPetDto);
+    return await this.petService.create(createPetDto);
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(@Param('id') id: number, @Body() updatePetDto: UpdatePetDto) {
     return await this.petService.update(+id, updatePetDto);
   }
@@ -46,7 +46,7 @@ export class PetController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: number) {
-    return await this.petService.destroy(+id);
+    return await this.petService.remove(+id);
   }
 
   @Get('projeto/:id')

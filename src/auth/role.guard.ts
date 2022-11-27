@@ -1,8 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
-
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class RoleGuard implements CanActivate {

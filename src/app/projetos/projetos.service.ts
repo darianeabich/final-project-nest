@@ -25,9 +25,10 @@ export class ProjetosService {
         'projeto.status',
         'projeto.finalizado',
         'projeto.tematicaId',
-        'projeto.usuarioId',
+        'projeto.usuario',
       ])
-      .leftJoinAndSelect('projeto.tematica', 'tematica');
+      .leftJoinAndSelect('projeto.tematica', 'tematica')
+      .leftJoinAndSelect('projeto.usuario', 'usuario');
     queryBuilder.orderBy('projeto.id', 'ASC');
     return paginate<ProjetoEntity>(queryBuilder, options);
   }
@@ -42,7 +43,7 @@ export class ProjetosService {
         'projeto.status',
         'projeto.finalizado',
         'projeto.tematicaId',
-        'projeto.usuarioId',
+        'projeto.usuario',
       ])
       .leftJoinAndSelect('projeto.tematica', 'tematica')
       .where('projeto.id = :id', { id });
@@ -58,7 +59,36 @@ export class ProjetosService {
     }
   }
 
-  async store(createProjetoDto: CreateProjetoDto) {
+  async findByUser(id: number) {
+    // const projetosEncontrados = await this.projetoRepository.find({
+    //   where: { id },
+    // });
+
+    // if (!projetosEncontrados) {
+    //   throw new NotFoundException('Nenhum projeto encontrado');
+    // }
+
+    // return projetosEncontrados;
+
+    const queryBuilder = this.projetoRepository.createQueryBuilder('projeto');
+    queryBuilder
+      .select([
+        'projeto.id',
+        'projeto.titulo',
+        'projeto.descricao',
+        'projeto.status',
+        'projeto.finalizado',
+        'projeto.tematicaId',
+        'projeto.usuario',
+      ])
+      .leftJoinAndSelect('projeto.tematica', 'tematica')
+      .leftJoinAndSelect('projeto.usuario', 'usuario')
+      .where('projeto.usuario = :id', { id });
+
+    return queryBuilder;
+  }
+
+  async create(createProjetoDto: CreateProjetoDto) {
     const projetoCriado = this.projetoRepository.create(createProjetoDto);
     return await this.projetoRepository.save(projetoCriado);
   }
@@ -77,7 +107,7 @@ export class ProjetosService {
     return await this.projetoRepository.save(projetoEncontrado);
   }
 
-  async destroy(id: number) {
+  async remove(id: number) {
     await this.projetoRepository.findOneOrFail({ where: { id } });
     this.projetoRepository.softDelete({ id });
   }
