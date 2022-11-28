@@ -20,12 +20,11 @@ npm install
 5. Levantar a base de dados
 6. Executar o app:
 
-# development
+## development
 ```
 npm run start
 ```
-
-# watch mode
+### watch mode
 ```
 $ npm run start:dev
 ```
