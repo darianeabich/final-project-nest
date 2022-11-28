@@ -19,8 +19,7 @@ npm install
 4. Trocar as variáveis de ambiente
 5. Levantar a base de dados
 6. Executar o app:
-
-## development
+### development
 ```
 npm run start
 ```
