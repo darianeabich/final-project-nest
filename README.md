@@ -10,7 +10,7 @@
 ```bash
 1. Clonar o projeto
 2. Instalar depedências: 
-  $ npm install
+$ npm install
 3. Clonar o arquivo ```.env.template``` e renomeá-lo para ```.env```
 4. Trocar as variáveis de ambiente
 5. Levantar a base de dados
