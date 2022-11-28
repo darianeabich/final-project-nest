@@ -9,6 +9,11 @@ Projeto destinado para a aplicação backend da **projetES**.
 
 Url: ``localhost:3000/api``
 
+> NestJs: ^9.0.0
+
+> TypeORM: ^0.3.10
+
+
 ## Installation
 1. Clonar o projeto
 2. Instalar depedências: 
