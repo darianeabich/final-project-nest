@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { paginate } from 'nestjs-typeorm-paginate';
 import { FindOneOptions, Repository } from 'typeorm';
-import { IPaginationOptions } from './../../../node_modules/nestjs-typeorm-paginate/dist/interfaces/index.d';
+import { PaginationDto } from './../../common/dto/pagination.dto';
 import { CreateTematicaDto } from './dto/create-tematica.dto';
 import { UpdateTematicaDto } from './dto/update-tematica.dto';
 import { TematicaEntity } from './entities/tematica.entity';
@@ -14,13 +13,14 @@ export class TematicasService {
     private tematicasRepository: Repository<TematicaEntity>,
   ) {}
 
-  findAll(options: IPaginationOptions) {
-    const queryBuilder =
-      this.tematicasRepository.createQueryBuilder('tematica');
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+    const tematicas = await this.tematicasRepository.find({
+      take: limit,
+      skip: offset,
+    });
 
-    queryBuilder.select(['tematica.id', 'tematica.titulo']);
-    queryBuilder.orderBy('tematica.id', 'ASC');
-    return paginate<TematicaEntity>(queryBuilder, options);
+    return tematicas;
   }
 
   async findOneOrFail(options: FindOneOptions<TematicaEntity>) {

@@ -1,15 +1,17 @@
-import { UsuariosSignUpController } from './sign-up/usuario-sign-up.controller';
-/* eslint-disable prettier/prettier */
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from '../../auth/auth.module';
+import { UsuarioEntity } from './entities/usuarios.entity';
 import { UsuariosController } from './usuarios.controller';
 import { UsuariosService } from './usuarios.service';
-import { UsuarioEntity } from './entities/usuarios.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsuarioEntity])],
-  controllers: [UsuariosController, UsuariosSignUpController],
+  imports: [TypeOrmModule.forFeature([UsuarioEntity]), AuthModule],
+
+  controllers: [UsuariosController],
+
   providers: [UsuariosService],
+
   exports: [UsuariosService],
 })
 export class UsuariosModule {}

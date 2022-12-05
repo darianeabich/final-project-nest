@@ -8,15 +8,16 @@ import { EtapasModule } from './app/etapas/etapas.module';
 import { GruposModule } from './app/grupos/grupos.module';
 import { ProjetosModule } from './app/projetos/projetos.module';
 // import { ProjetoEtapaTecnicaModule } from './app/projeto_etapa_tecnica/projeto_etapa_tecnica.module';
+import { ParticipacaoModule } from './app/participacao/participacao.module';
+import { PetModule } from './app/pet/pet.module';
 import { TecnicasModule } from './app/tecnicas/tecnicas.module';
 import { TematicasModule } from './app/tematicas/tematicas.module';
-import { UsuariosModule } from './app/usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 import { FiltroDeExcecaoHttp } from './common/filtros/filtro-de-excecao-http.filter';
 import { TransfomaInterceptor } from './core/http/transforma-resposta.interceptor';
-import { PetModule } from './app/pet/pet.module';
-import { ParticipacaoModule } from './app/participacao/participacao.module';
-import { CommonModule } from './common/common.module';
+import { UsuariosModule } from './app/usuarios/usuarios.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -34,7 +35,7 @@ import { CommonModule } from './common/common.module';
       migrationsTableName: 'migration',
     } as TypeOrmModuleOptions),
     // synchronize: true,),
-    UsuariosModule,
+
     AuthModule,
     EtapasModule,
     TecnicasModule,
@@ -44,6 +45,7 @@ import { CommonModule } from './common/common.module';
     PetModule,
     ParticipacaoModule,
     CommonModule,
+    UsuariosModule,
     // ProjetoEtapaTecnicaModule,
   ],
   controllers: [],

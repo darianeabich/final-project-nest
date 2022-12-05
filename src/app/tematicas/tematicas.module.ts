@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { TematicasService } from './tematicas.service';
-import { TematicasController } from './tematicas.controller';
-import { TematicaEntity } from './entities/tematica.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './../../auth/auth.module';
+import { TematicaEntity } from './entities/tematica.entity';
+import { TematicasController } from './tematicas.controller';
+import { TematicasService } from './tematicas.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TematicaEntity])],
+  imports: [TypeOrmModule.forFeature([TematicaEntity]), AuthModule],
   controllers: [TematicasController],
   providers: [TematicasService],
 })

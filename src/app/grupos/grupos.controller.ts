@@ -25,10 +25,10 @@ export class GruposController {
     return this.gruposService.findAll(paginationDto);
   }
 
-  // @Get(':id')
-  // findGrupoById(@Param('id', ParseIntPipe) id: number) {
-  //   return this.gruposService.findOneById(+id);
-  // }
+  @Get(':id')
+  findGrupoById(@Param('id', ParseIntPipe) id: number) {
+    return this.gruposService.findOneById(+id);
+  }
 
   @Get('search')
   findGrupobyTerm(@Body() termo: SearchGrupoDto) {

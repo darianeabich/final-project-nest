@@ -6,10 +6,12 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
 import { PetService } from './pet.service';
@@ -19,17 +21,12 @@ export class PetController {
   constructor(private readonly petService: PetService) {}
 
   @Get()
-  async index(@Query('page') page = 1, @Query('limit') limit = 10) {
-    limit = limit > 100 ? 100 : limit;
-    return await this.petService.findAll({
-      page,
-      limit,
-      route: 'http://localhost:3000/pet',
-    });
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.petService.findAll(paginationDto);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.petService.findOneOrFail({ where: { id } });
   }
 
@@ -39,13 +36,16 @@ export class PetController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updatePetDto: UpdatePetDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatePetDto: UpdatePetDto,
+  ) {
     return await this.petService.update(+id, updatePetDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return await this.petService.remove(+id);
   }
 

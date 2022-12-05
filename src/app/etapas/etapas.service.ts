@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { paginate } from 'nestjs-typeorm-paginate';
 import { FindOneOptions, Repository } from 'typeorm';
 import { CreateEtapaDto } from '../../app/etapas/dto/create-etapa.dto';
 import { UpdateEtapaDto } from '../../app/etapas/dto/update-etapa.dto';
-import { IPaginationOptions } from './../../../node_modules/nestjs-typeorm-paginate/dist/interfaces/index.d';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 import { EtapaEntity } from './entities/etapa.entity';
 
 @Injectable()
@@ -14,12 +13,14 @@ export class EtapasService {
     private readonly etapaRepository: Repository<EtapaEntity>,
   ) {}
 
-  async findAll(options: IPaginationOptions) {
-    const queryBuilder = this.etapaRepository.createQueryBuilder('etapa');
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+    const etapas = await this.etapaRepository.find({
+      take: limit,
+      skip: offset,
+    });
 
-    queryBuilder.select(['etapa.id', 'etapa.titulo', 'etapa.descricao']);
-    queryBuilder.orderBy('etapa.id', 'ASC');
-    return paginate<EtapaEntity>(queryBuilder, options);
+    return etapas;
   }
 
   async findOneOrFail(options: FindOneOptions<EtapaEntity>) {

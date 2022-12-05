@@ -13,23 +13,6 @@ export class TecnicasService {
     private readonly tecnicaRepository: Repository<TecnicaEntity>,
   ) {}
 
-  // async findAll(options: IPaginationOptions) {
-  //   const queryBuilder = this.tecnicaRepository.createQueryBuilder('tecnica');
-  //   queryBuilder.select([
-  //     'tecnica.id',
-  //     'tecnica.titulo',
-  //     'tecnica.descricao',
-  //     'tecnica.como_usar',
-  //     'tecnica.quando_usar',
-  //     'tecnica.material',
-  //     'tecnica.tempo',
-  //     'tecnica.tipo',
-  //     'tecnica.status',
-  //   ]);
-  //   queryBuilder.orderBy('tecnica.id', 'ASC');
-  //   return paginate<TecnicaEntity>(queryBuilder, options);
-  // }
-
   async findAll(paginationDto: PaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto;
     const tecnicas = await this.tecnicaRepository.find({
@@ -40,10 +23,13 @@ export class TecnicasService {
     return tecnicas;
   }
 
-  // async findOne() {
-  //   let tecnica: TecnicaEntity;
+  findOneById(id: number) {
+    const tecnica = this.tecnicaRepository.findOne({ where: { id } });
 
-  // }
+    if (!tecnica) throw new NotFoundException(`Técnica #{id} not found`);
+
+    return tecnica;
+  }
 
   async findOneOrFail(options: FindOneOptions<TecnicaEntity>) {
     try {

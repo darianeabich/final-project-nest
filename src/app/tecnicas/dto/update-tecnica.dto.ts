@@ -1,13 +1,37 @@
 import { PartialType } from '@nestjs/mapped-types';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { CreateTecnicaDto } from './create-tecnica.dto';
 
 export class UpdateTecnicaDto extends PartialType(CreateTecnicaDto) {
-  titulo: string;
-  descricao: string;
-  status: boolean;
-  como_usar: string;
-  quando_usar: string;
-  material: string;
-  tempo: string;
-  tipo: string;
+  @IsOptional()
+  @IsString()
+  titulo?: string;
+
+  @IsOptional()
+  @IsString()
+  descricao?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  status?: boolean;
+
+  @IsOptional()
+  @IsString()
+  como_usar?: string;
+
+  @IsOptional()
+  @IsString()
+  quando_usar?: string;
+
+  @IsOptional()
+  @IsString()
+  material?: string;
+
+  @IsOptional()
+  @IsString()
+  tempo?: string;
+
+  @IsOptional()
+  @IsString()
+  tipo?: string;
 }
