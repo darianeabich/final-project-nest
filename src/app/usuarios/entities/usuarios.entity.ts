@@ -2,6 +2,7 @@ import { hashSync } from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import {
   BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -52,7 +53,17 @@ export class UsuarioEntity {
     this.senha = hashSync(this.senha, 8);
   }
 
-  @OneToMany(() => ProjetoEntity, (projeto) => projeto.usuario)
+  @BeforeInsert()
+  checkEmailBeforeInsert() {
+    this.email = this.email.toLowerCase().trim();
+  }
+
+  @BeforeUpdate()
+  checkEmailBeforeUpdate() {
+    this.checkEmailBeforeInsert();
+  }
+
+  @OneToMany(() => ProjetoEntity, (projeto) => projeto.usuario, { eager: true })
   projeto: ProjetoEntity[];
 
   addProjeto(project: ProjetoEntity) {

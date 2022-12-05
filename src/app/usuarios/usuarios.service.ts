@@ -1,13 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import {
-  IPaginationOptions,
-  paginate,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
-import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { from, map } from 'rxjs';
 import { FindOneOptions, Like, Repository } from 'typeorm';
+import { AuthService } from '../../auth/auth.service';
+import { PaginationDto } from './../../common/dto/pagination.dto';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuarios.dto';
 import { UsuarioEntity } from './entities/usuarios.entity';
@@ -16,39 +18,31 @@ import { UsuarioEntity } from './entities/usuarios.entity';
 export class UsuariosService {
   constructor(
     @InjectRepository(UsuarioEntity)
-    private readonly usuariosRepository: Repository<UsuarioEntity>,
+    private readonly usuarioRepository: Repository<UsuarioEntity>,
+
+    private readonly authService: AuthService,
   ) {}
 
-  findAll(options: IPaginationOptions) {
-    const queryBuilder = this.usuariosRepository.createQueryBuilder('user');
+  async findAll(paginaitionDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginaitionDto;
 
-    queryBuilder.select([
-      'user.id',
-      'user.nome',
-      'user.email',
-      'user.cod_institucional',
-      'user.perfil',
-      'user.status',
-    ]);
-    queryBuilder.orderBy('user.id', 'ASC');
-    return paginate<UsuarioEntity>(queryBuilder, options);
-  }
+    const usuarios = await this.usuarioRepository.find({
+      take: limit,
+      skip: offset,
+      relations: {
+        projeto: true,
+      },
+    });
 
-  paginate(options: IPaginationOptions) {
-    console.log(options);
-    return from(paginate<UsuarioEntity>(this.usuariosRepository, options)).pipe(
-      map((usersPageable: Pagination<UsuarioEntity>) => {
-        usersPageable.items.forEach(function (v) {
-          delete v.senha;
-          return usersPageable;
-        });
-      }),
-    );
+    return usuarios.map((usuario) => ({
+      ...usuario,
+      projeto: usuario.projeto.map((projeto) => projeto.id),
+    }));
   }
 
   paginateFilterByNome(options: IPaginationOptions, user: UsuarioEntity) {
     return from(
-      this.usuariosRepository.findAndCount({
+      this.usuarioRepository.findAndCount({
         skip: Number(options.page) * Number(options.limit) || 0,
         take: Number(options.limit) || 10,
         order: { id: 'ASC' },
@@ -60,12 +54,14 @@ export class UsuariosService {
           'perfil',
           'status',
         ],
+
         where: { nome: Like(`%${user.nome}%`) },
       }),
     ).pipe(
       map(([users, total]) => {
         const userPageable: Pagination<UsuarioEntity> = {
           items: users,
+
           links: {
             first: options.route + `?limit=${options.limit}`,
             previous: options.route + ``,
@@ -78,6 +74,7 @@ export class UsuariosService {
                 total / Number(options.limit),
               )}`,
           },
+
           meta: {
             currentPage: Number(options.page),
             itemCount: users.length,
@@ -94,15 +91,31 @@ export class UsuariosService {
 
   async findOneOrFail(options: FindOneOptions<UsuarioEntity>) {
     try {
-      return await this.usuariosRepository.findOneOrFail(options);
+      return await this.usuarioRepository.findOneOrFail(options);
     } catch (error) {
       throw new NotFoundException(error.message);
     }
   }
 
   async create(usuario: CreateUsuarioDto) {
-    const usuarioCriado = this.usuariosRepository.create(usuario);
-    return await this.usuariosRepository.save(usuarioCriado);
+    try {
+      const usuarioCriado = this.usuarioRepository.create(usuario);
+
+      await this.usuarioRepository.save(usuarioCriado);
+
+      delete usuarioCriado.senha;
+
+      return {
+        ...usuarioCriado,
+        token: this.authService.getJwtToken({
+          id: usuarioCriado.id,
+          perfil: usuarioCriado.perfil,
+          nome: usuarioCriado.nome,
+        }),
+      };
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
   }
 
   async update(id: number, body: UpdateUsuarioDto) {
@@ -122,13 +135,22 @@ export class UsuariosService {
       usuarioEncontrado.cod_institucional = body.cod_institucional;
     }
 
-    this.usuariosRepository.merge(usuarioEncontrado, body);
+    this.usuarioRepository.merge(usuarioEncontrado, body);
 
-    return await this.usuariosRepository.save(usuarioEncontrado);
+    return await this.usuarioRepository.save(usuarioEncontrado);
   }
 
   async remove(id: number) {
-    await this.usuariosRepository.findOneOrFail({ where: { id } });
-    this.usuariosRepository.softDelete({ id });
+    await this.usuarioRepository.findOneOrFail({ where: { id } });
+
+    this.usuarioRepository.softDelete({ id });
+  }
+
+  private handleDBErrors(error: any): never {
+    if (error.code === '23505') throw new BadRequestException(error.detail);
+
+    console.log(error);
+
+    throw new InternalServerErrorException('Please check server logs');
   }
 }

@@ -7,10 +7,12 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
 import { UpdateProjetoDto } from './dto/update-projeto.dto';
 import { ProjetosService } from './projetos.service';
@@ -20,33 +22,30 @@ export class ProjetosController {
   constructor(private readonly projetosService: ProjetosService) {}
 
   @Get()
-  async index(@Query('page') page = 1, @Query('limit') limit = 10) {
-    limit = limit > 100 ? 100 : limit;
-    return this.projetosService.findAll({
-      page,
-      limit,
-      route: 'http://localhost:3000/projetos',
-    });
+  async findAll(@Query() paginationDto: PaginationDto) {
+    return await this.projetosService.findAll(paginationDto);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.projetosService.findOneOrFail({ where: { id } });
   }
 
   @Get('owner/:id')
-  async findByUser(@Param('id') id: number) {
+  async findByUser(@Param('id', ParseIntPipe) id: number) {
     return this.projetosService.findByUser(id);
   }
 
   @Post()
+  // @Auth(ValidPerfis.ADMINISTRADOR, ValidPerfis.FACILITADOR)
   async create(@Body() createProjetoDto: CreateProjetoDto) {
     return this.projetosService.create(createProjetoDto);
   }
 
   @Patch(':id')
+  // @Auth(ValidPerfis.ADMINISTRADOR, ValidPerfis.FACILITADOR)
   async update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProjetoDto: UpdateProjetoDto,
   ) {
     return this.projetosService.update(+id, updateProjetoDto);
@@ -54,7 +53,8 @@ export class ProjetosController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: number) {
+  // @Auth(ValidPerfis.ADMINISTRADOR, ValidPerfis.FACILITADOR)
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return this.projetosService.remove(+id);
   }
 }

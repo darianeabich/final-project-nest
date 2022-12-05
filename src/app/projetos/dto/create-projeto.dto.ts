@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
+import { UsuarioEntity } from '../../usuarios/entities/usuarios.entity';
 import { TematicaEntity } from './../../tematicas/entities/tematica.entity';
-import { UsuarioEntity } from './../../usuarios/entities/usuarios.entity';
 
 export class CreateProjetoDto {
   @IsNotEmpty()

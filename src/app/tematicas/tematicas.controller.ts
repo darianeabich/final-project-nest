@@ -5,30 +5,28 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 import { CreateTematicaDto } from './dto/create-tematica.dto';
 import { UpdateTematicaDto } from './dto/update-tematica.dto';
 import { TematicasService } from './tematicas.service';
 
 @Controller('tematicas')
+// @Auth()
 export class TematicasController {
   constructor(private readonly tematicasService: TematicasService) {}
 
   @Get()
-  async index(@Query('page') page = 1, @Query('limit') limit = 10) {
-    limit = limit > 100 ? 100 : limit;
-    return this.tematicasService.findAll({
-      page,
-      limit,
-      route: 'http://localhost:3000/tematicas',
-    });
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.tematicasService.findAll(paginationDto);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.tematicasService.findOneOrFail({ where: { id } });
   }
 
@@ -39,14 +37,14 @@ export class TematicasController {
 
   @Patch(':id')
   async update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateTematicaDto: UpdateTematicaDto,
   ) {
     return this.tematicasService.update(+id, updateTematicaDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return this.tematicasService.remove(+id);
   }
 }

@@ -1,8 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
-import { Roles } from './../../helpers/roles';
-import { UsuariosService } from './../usuarios/usuarios.service';
 import { CreateParticipacaoDto } from './dto/create-participacao.dto';
 import { UpdateParticipacaoDto } from './dto/update-participacao.dto';
 import { Participacao } from './entities/participacao.entity';
@@ -11,27 +9,26 @@ import { Participacao } from './entities/participacao.entity';
 export class ParticipacaoService {
   constructor(
     @InjectRepository(Participacao)
-    private readonly participacaoRepository: Repository<Participacao>,
-    private readonly usuariosService: UsuariosService,
+    private readonly participacaoRepository: Repository<Participacao>, // private readonly usuariosService: AuthService,
   ) {}
 
   async create(createParticipacaoDto: CreateParticipacaoDto) {
-    const id = createParticipacaoDto.usuariosId;
-    const usuario = this.usuariosService.findOneOrFail({
-      where: { id },
-    });
+    // const id = createParticipacaoDto.usuariosId;
+    // const usuario = this.usuariosService.findOneOrFail({
+    //   where: { id },
+    // });
 
-    let perfil;
+    // let perfil;
 
-    usuario.then((usuario) => {
-      perfil = usuario.perfil;
-    });
+    // usuario.then((usuario) => {
+    //   perfil = usuario.perfil;
+    // });
 
-    if (perfil !== Roles.PARTICIPANTE) {
-      throw new Error(
-        `Para participar de um projeto, o usuário deve ser: ${Roles.PARTICIPANTE}`,
-      );
-    }
+    // if (perfil !== Roles.PARTICIPANTE) {
+    //   throw new Error(
+    //     `Para participar de um projeto, o usuário deve ser: ${Roles.PARTICIPANTE}`,
+    //   );
+    // }
 
     return await this.participacaoRepository.save(createParticipacaoDto);
   }
@@ -102,8 +99,8 @@ export class ParticipacaoService {
     usuariosId: number,
     updateParticipacaoDto: UpdateParticipacaoDto,
   ) {
-    const projetos = await this.findOneOrFail({ where: { projetosId } });
-    const usuarios = await this.findOneOrFail({ where: { usuariosId } });
+    // const projetos = await this.findOneOrFail({ where: { projetosId } });
+    // const usuarios = await this.findOneOrFail({ where: { usuariosId } });
 
     const queryBuilder =
       this.participacaoRepository.createQueryBuilder('participacao');

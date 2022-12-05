@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { paginate } from 'nestjs-typeorm-paginate';
 import { FindOneOptions, Repository } from 'typeorm';
-import { IPaginationOptions } from './../../../node_modules/nestjs-typeorm-paginate/dist/interfaces/index.d';
+import { PaginationDto } from './../../common/dto/pagination.dto';
 import { CreateProjetoDto } from './dto/create-projeto.dto';
 import { UpdateProjetoDto } from './dto/update-projeto.dto';
 import { ProjetoEntity } from './entities/projeto.entity';
@@ -14,23 +13,23 @@ export class ProjetosService {
     private readonly projetoRepository: Repository<ProjetoEntity>,
   ) {}
 
-  findAll(options: IPaginationOptions) {
-    const queryBuilder = this.projetoRepository.createQueryBuilder('projeto');
+  async findAll(paginationDto?: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
 
-    queryBuilder
-      .select([
-        'projeto.id',
-        'projeto.titulo',
-        'projeto.descricao',
-        'projeto.status',
-        'projeto.finalizado',
-        'projeto.tematicaId',
-        'projeto.usuario',
-      ])
-      .leftJoinAndSelect('projeto.tematica', 'tematica')
-      .leftJoinAndSelect('projeto.usuario', 'usuario');
-    queryBuilder.orderBy('projeto.id', 'ASC');
-    return paginate<ProjetoEntity>(queryBuilder, options);
+    const projetos = await this.projetoRepository.find({
+      take: limit,
+      skip: offset,
+      relations: {
+        tematica: true,
+        usuario: true,
+      },
+    });
+
+    return projetos.map((projeto) => ({
+      ...projeto,
+      tematica: projeto.tematica.titulo,
+      usuario: projeto.usuario.id,
+    }));
   }
 
   findOne(id: number) {
@@ -60,32 +59,27 @@ export class ProjetosService {
   }
 
   async findByUser(id: number) {
-    // const projetosEncontrados = await this.projetoRepository.find({
-    //   where: { id },
-    // });
+    const projetos = await this.projetoRepository.find({
+      where: {
+        usuario: {
+          id: id,
+        },
+      },
+      relations: {
+        tematica: true,
+        usuario: true,
+      },
+    });
 
-    // if (!projetosEncontrados) {
-    //   throw new NotFoundException('Nenhum projeto encontrado');
-    // }
+    // projetos.map((projeto) => ({
+    //   ...projeto,
+    //   tematica: projeto.tematica.titulo,
+    //   usuario: projeto.usuario.id,
+    // }));
+    // const qb = this.projetoRepository.createQueryBuilder('projeto');
+    // qb.select(['projeto.id', 'projeto.titulo', 'projeto.tematica']);
 
-    // return projetosEncontrados;
-
-    const queryBuilder = this.projetoRepository.createQueryBuilder('projeto');
-    queryBuilder
-      .select([
-        'projeto.id',
-        'projeto.titulo',
-        'projeto.descricao',
-        'projeto.status',
-        'projeto.finalizado',
-        'projeto.tematicaId',
-        'projeto.usuario',
-      ])
-      .leftJoinAndSelect('projeto.tematica', 'tematica')
-      .leftJoinAndSelect('projeto.usuario', 'usuario')
-      .where('projeto.usuario = :id', { id });
-
-    return queryBuilder;
+    return projetos;
   }
 
   async create(createProjetoDto: CreateProjetoDto) {

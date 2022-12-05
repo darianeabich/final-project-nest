@@ -10,8 +10,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UsuarioEntity } from '../../usuarios/entities/usuarios.entity';
 import { GrupoEntity } from './../../grupos/entities/grupo.entity';
-import { UsuarioEntity } from './../../usuarios/entities/usuarios.entity';
 
 import { TematicaEntity } from './../../tematicas/entities/tematica.entity';
 

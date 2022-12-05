@@ -1,9 +1,16 @@
-import { IsEmail, IsNotEmpty, Matches } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  Matches,
+} from 'class-validator';
 import { MessagesHelpers } from 'src/helpers/messages.helpers';
 import { RegExHelper } from 'src/helpers/regex.helpers';
 
 export class CreateUsuarioDto {
   @IsNotEmpty()
+  @IsString()
   nome: string;
 
   @IsNotEmpty()
@@ -11,6 +18,7 @@ export class CreateUsuarioDto {
   email: string;
 
   @IsNotEmpty()
+  @IsString()
   cod_institucional: string;
 
   @IsNotEmpty()
@@ -21,5 +29,6 @@ export class CreateUsuarioDto {
   perfil: string;
 
   @IsNotEmpty()
+  @IsBoolean()
   status: boolean;
 }

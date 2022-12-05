@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import {
   Body,
   Controller,
@@ -11,7 +10,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-
+import { PaginationDto } from './../../common/dto/pagination.dto';
 import { NestResponse } from './../../core/http/nest-response';
 import { NestResponseBuilder } from './../../core/http/nest-response-builder';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -19,25 +18,19 @@ import { UpdateUsuarioDto } from './dto/update-usuarios.dto';
 import { UsuariosService } from './usuarios.service';
 
 @Controller('usuarios')
-// @UseGuards(AuthGuard('jwt'))
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
-  @Get()
-  async index(@Query('page') page = 1, @Query('limit') limit = 10) {
-    limit = limit > 100 ? 100 : limit;
-    return this.usuariosService.findAll({
-      page,
-      limit,
-      route: 'http://localhost:3000/usuarios',
-    });
+  @Get('')
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.usuariosService.findAll(paginationDto);
   }
-
   // @Role('admin')
   // @Header('Access-Control-Allow-Origin', '*')
-  @Post()
+  @Post('')
   async create(@Body() body: CreateUsuarioDto): Promise<NestResponse> {
     const usuarioCriado = await this.usuariosService.create(body);
+
     return new NestResponseBuilder()
       .comStatus(HttpStatus.CREATED)
       .comHeaders({

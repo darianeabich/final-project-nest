@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { PaginationDto } from './../../common/dto/pagination.dto';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
@@ -14,13 +14,25 @@ export class PetService {
     private readonly petRepository: Repository<PetEntity>,
   ) {}
 
-  async findAll(options: IPaginationOptions) {
-    const queryBuilder = this.petRepository.createQueryBuilder('pet');
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
 
-    queryBuilder.select(['pet.id', 'pet.projeto', 'pet.etapa', 'pet.tecnicas']);
-    queryBuilder.orderBy('pet.id', 'ASC');
+    const pets = await this.petRepository.find({
+      take: limit,
+      skip: offset,
+      relations: {
+        projeto: true,
+        etapa: true,
+        tecnicas: true,
+      },
+    });
 
-    return paginate<PetEntity>(queryBuilder, options);
+    return pets.map((pet) => ({
+      ...pet,
+      projeto: pet.projeto,
+      etapa: pet.etapa,
+      tecnicas: pet.tecnicas.map((tec) => tec.id),
+    }));
   }
 
   findOne(id: number) {

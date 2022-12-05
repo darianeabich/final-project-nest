@@ -6,15 +6,13 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
-
-import { ParticipacaoService } from './participacao.service';
-
 import { CreateParticipacaoDto } from './dto/create-participacao.dto';
-
 import { UpdateParticipacaoDto } from './dto/update-participacao.dto';
+import { ParticipacaoService } from './participacao.service';
 
 @Controller('participacao')
 export class ParticipacaoController {
@@ -34,12 +32,12 @@ export class ParticipacaoController {
   }
 
   @Get('usuarioId:usuarioId')
-  findAllProjects(@Param('usuarioId') usuarioId: number) {
+  findAllProjects(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
     return this.participacaoService.findParticipacaoByUser(usuarioId);
   }
 
   @Get('projeto:projetoId')
-  findAllUsers(@Param('projetoId') projetoId: number) {
+  findAllUsers(@Param('projetoId', ParseIntPipe) projetoId: number) {
     return this.participacaoService.findParticipacaoByProject(projetoId);
   }
 
@@ -50,7 +48,7 @@ export class ParticipacaoController {
 
   @Patch(':id')
   update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() idUsuario: number,
     @Body() updateParticipacaoDto: UpdateParticipacaoDto,
   ) {
@@ -63,7 +61,7 @@ export class ParticipacaoController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.participacaoService.remove(+id);
   }
 }

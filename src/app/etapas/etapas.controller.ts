@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -13,6 +14,7 @@ import {
 
 import { CreateEtapaDto } from '../../app/etapas/dto/create-etapa.dto';
 import { UpdateEtapaDto } from '../../app/etapas/dto/update-etapa.dto';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 import { EtapasService } from './etapas.service';
 
 /* eslint-disable prettier/prettier */
@@ -21,31 +23,27 @@ export class EtapasController {
   constructor(private readonly etapasService: EtapasService) {}
 
   @Get()
-  async index(@Query('page') page = 1, @Query('limit') limit = 10) {
-    limit = limit > 100 ? 100 : limit;
-
-    return this.etapasService.findAll({
-      page,
-      limit,
-      route: 'http://localhost:3000/etapas',
-    });
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.etapasService.findAll(paginationDto);
   }
 
   @Get(':id')
-  async show(@Param('id') id: number) {
+  async show(@Param('id', ParseIntPipe) id: number) {
     return this.etapasService.findOneOrFail({ where: { id } });
   }
 
   // @Role('admin')
   @Post()
+  // @Auth(ValidPerfis.ADMINISTRADOR)
   async create(@Body() createEtapaDto: CreateEtapaDto) {
     return this.etapasService.create(createEtapaDto);
   }
 
   // @Role('admin')
   @Patch(':id')
+  // @Auth(ValidPerfis.ADMINISTRADOR)
   async update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateEtapaDto: UpdateEtapaDto,
   ) {
     return this.etapasService.update(+id, updateEtapaDto);
@@ -54,7 +52,8 @@ export class EtapasController {
   // @Role('admin')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: number) {
+  // @Auth(ValidPerfis.ADMINISTRADOR)
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return await this.etapasService.remove(id);
   }
 }
