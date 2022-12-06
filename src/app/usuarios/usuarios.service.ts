@@ -97,6 +97,24 @@ export class UsuariosService {
     }
   }
 
+  findOne(id: number) {
+    const queryBuilder = this.usuarioRepository.createQueryBuilder('usuario');
+    queryBuilder
+      .select([
+        'usuario.id',
+        'usuario.nome',
+        'usuario.email',
+        'usuario.cod_institucional',
+        'usuario.perfil',
+        'usuario.status',
+        'usuario.projeto',
+      ])
+      .leftJoinAndSelect('usuario.projeto', 'projeto')
+      .where('usuario.id = :id', { id });
+
+    return queryBuilder;
+  }
+
   async create(usuario: CreateUsuarioDto) {
     try {
       const usuarioCriado = this.usuarioRepository.create(usuario);

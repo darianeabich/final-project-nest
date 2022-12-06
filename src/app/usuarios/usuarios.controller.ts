@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -41,19 +42,22 @@ export class UsuariosController {
   }
 
   @Get(':id')
-  async show(@Param('id') id: number) {
+  async show(@Param('id', ParseIntPipe) id: number) {
     return await this.usuariosService.findOneOrFail({ where: { id } });
   }
 
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() body: UpdateUsuarioDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateUsuarioDto,
+  ) {
     return await this.usuariosService.update(id, body);
   }
 
   // @Role('admin')
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return await this.usuariosService.remove(id);
   }
 }

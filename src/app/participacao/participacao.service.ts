@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
 import { CreateParticipacaoDto } from './dto/create-participacao.dto';
@@ -7,12 +14,42 @@ import { Participacao } from './entities/participacao.entity';
 
 @Injectable()
 export class ParticipacaoService {
+  private readonly logger = new Logger(ParticipacaoService.name);
+
   constructor(
     @InjectRepository(Participacao)
-    private readonly participacaoRepository: Repository<Participacao>, // private readonly usuariosService: AuthService,
+    private readonly participacaoRepository: Repository<Participacao>, // private readonly usuariosService: UsuariosService,
   ) {}
 
   async create(createParticipacaoDto: CreateParticipacaoDto) {
+    const participacao = await this.participacaoRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Participacao)
+      .values({
+        usuariosId: createParticipacaoDto.usuariosId,
+        projetosId: createParticipacaoDto.projetosId,
+        fl_aceito: createParticipacaoDto.fl_aceito,
+      })
+      .execute();
+
+    return participacao;
+    // try {
+    //   const { projetosId, usuariosId, fl_aceito } = createParticipacaoDto;
+
+    //   const participacao = this.participacaoRepository.create({
+    //     projetosId,
+    //     usuariosId,
+    //     fl_aceito,
+    //   });
+
+    //   await this.participacaoRepository.save(participacao);
+
+    //   return participacao;
+    // } catch (error) {
+    //   this.handleDBException(error);
+    // }
+
     // const id = createParticipacaoDto.usuariosId;
     // const usuario = this.usuariosService.findOneOrFail({
     //   where: { id },
@@ -30,7 +67,7 @@ export class ParticipacaoService {
     //   );
     // }
 
-    return await this.participacaoRepository.save(createParticipacaoDto);
+    // return await this.participacaoRepository.save(createParticipacaoDto);
   }
 
   findAll() {
@@ -107,7 +144,7 @@ export class ParticipacaoService {
 
     queryBuilder
       .select([
-        'participacao.ususariosId',
+        'participacao.usuariosId',
         'participacao.projetosId',
         'participacao.fl_aceito',
       ])
@@ -115,7 +152,9 @@ export class ParticipacaoService {
       .andWhere('participacao.projetosId = :projetosId', { projetosId })
       .getOne();
 
-    queryBuilder.update(UpdateParticipacaoDto).execute();
+    queryBuilder
+      .update({ fl_aceito: updateParticipacaoDto.fl_aceito })
+      .execute();
 
     if (queryBuilder) {
       return await this.participacaoRepository.save({
@@ -130,5 +169,16 @@ export class ParticipacaoService {
 
   remove(id: number) {
     return `This action removes a #${id} participacao`;
+  }
+
+  private handleDBException(error: any) {
+    if (error.code === '23505') {
+      throw new BadRequestException(error.detail);
+    }
+
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 }

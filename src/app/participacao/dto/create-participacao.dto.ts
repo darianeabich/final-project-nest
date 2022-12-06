@@ -1,15 +1,15 @@
-import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateParticipacaoDto {
-  @IsNumber()
+  // @IsNumber()
   @IsNotEmpty()
   projetosId: number;
 
-  @IsNumber()
+  // @IsNumber()
   @IsNotEmpty()
   usuariosId: number;
 
-  @IsBoolean()
+  // @IsBoolean()
   @IsNotEmpty()
   fl_aceito: boolean;
 }

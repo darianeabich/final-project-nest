@@ -31,12 +31,12 @@ export class ParticipacaoController {
     return this.participacaoService.findOneParticipacao(usuarioId, projetoId);
   }
 
-  @Get('usuarioId:usuarioId')
+  @Get('usuario/:usuarioId')
   findAllProjects(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
     return this.participacaoService.findParticipacaoByUser(usuarioId);
   }
 
-  @Get('projeto:projetoId')
+  @Get('projeto/:projetoId')
   findAllUsers(@Param('projetoId', ParseIntPipe) projetoId: number) {
     return this.participacaoService.findParticipacaoByProject(projetoId);
   }
@@ -46,14 +46,14 @@ export class ParticipacaoController {
     return this.participacaoService.create(createParticipacaoDto);
   }
 
-  @Patch(':id')
+  @Patch(':idProjeto/:idUsuario')
   update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() idUsuario: number,
+    @Param('idProjeto', ParseIntPipe) idProjeto: number,
+    @Param('idUsuario', ParseIntPipe) idUsuario: number,
     @Body() updateParticipacaoDto: UpdateParticipacaoDto,
   ) {
     return this.participacaoService.update(
-      id,
+      idProjeto,
       idUsuario,
       updateParticipacaoDto,
     );
